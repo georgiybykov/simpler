@@ -29,6 +29,9 @@ module Simpler
 
     def call(env)
       route = @router.route_for(env)
+
+      return not_found_url(env) unless route
+
       controller = route.controller.new(env)
       action = route.action
 
@@ -36,6 +39,12 @@ module Simpler
     end
 
     private
+
+    def setup_database
+      database_config = YAML.load_file(Simpler.root.join('config/database.yml'))
+      database_config['database'] = Simpler.root.join(database_config['database'])
+      @db = Sequel.connect(database_config)
+    end
 
     def require_app
       Dir["#{Simpler.root}/app/**/*.rb"].each { |file| require file }
@@ -45,10 +54,12 @@ module Simpler
       require Simpler.root.join('config/routes')
     end
 
-    def setup_database
-      database_config = YAML.load_file(Simpler.root.join('config/database.yml'))
-      database_config['database'] = Simpler.root.join(database_config['database'])
-      @db = Sequel.connect(database_config)
+    def not_found_url(env)
+      [
+        404,
+        { 'Content-Type' => 'text/plain' },
+        ["Not Found: #{env['PATH_INFO']}\n"]
+      ]
     end
 
     def make_response(controller, action)
