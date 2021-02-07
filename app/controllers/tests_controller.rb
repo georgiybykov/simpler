@@ -1,5 +1,6 @@
-class TestsController < Simpler::Controller
+# frozen_string_literal: true
 
+class TestsController < Simpler::Controller
   def index
     @time = Time.now
   end
@@ -7,5 +8,4 @@ class TestsController < Simpler::Controller
   def create
 
   end
-
 end
