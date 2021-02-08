@@ -32,6 +32,8 @@ module Simpler
 
       return not_found_url(env) unless route
 
+      env['simpler.params'] = route.params(env['REQUEST_PATH'])
+
       controller = route.controller.new(env)
       action = route.action
 
