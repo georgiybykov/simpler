@@ -31,11 +31,13 @@ module Simpler
     end
 
     def set_status(code)
+      raise ValidationError unless validate_status_code!(code)
+
       response.status = code
     end
 
     def set_headers(type)
-      raise ValidationError unless validate!(type)
+      raise ValidationError unless validate_headers_type!(type)
 
       response['Content-Type'] = HEADERS_TYPES[type]
       request.env['simpler.content_type'] = type
@@ -65,8 +67,12 @@ module Simpler
       request.env['simpler.template'] = template
     end
 
-    def validate!(type)
-      HEADERS_TYPES.has_key?(type)
+    def validate_status_code!(code)
+      Rack::Utils::HTTP_STATUS_CODES.key?(code)
+    end
+
+    def validate_headers_type!(type)
+      HEADERS_TYPES.key?(type)
     end
   end
 end
