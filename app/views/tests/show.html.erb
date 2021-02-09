@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Show | Simpler application</title>
+  </head>
+  <body>
+    <h1>Simpler framework in action!</h1>
+
+    <% if @test %>
+      <p><%= @test.title %> (<%= @test.level %>)</p>
+    <% else %>
+      <p>The record with `id = <%= @test_id %>` does not exist!</p>
+    <% end %>
+  </body>
+</html>

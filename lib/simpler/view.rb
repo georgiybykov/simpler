@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'erb'
 
 module Simpler
   class View
-
     VIEW_BASE_PATH = 'app/views'.freeze
 
     def initialize(env)
@@ -10,30 +11,35 @@ module Simpler
     end
 
     def render(binding)
-      template = File.read(template_path)
+      return "#{template[:plain]}\n" if template.is_a?(Hash) && template.key?(:plain)
 
-      ERB.new(template).result(binding)
+      template_file = File.read(template_path)
+
+      ERB.new(template_file).result(binding)
     end
 
     private
+    
+    attr_reader :env
 
     def controller
-      @env['simpler.controller']
+      env['simpler.controller']
     end
 
     def action
-      @env['simpler.action']
+      env['simpler.action']
     end
 
     def template
-      @env['simpler.template']
+      env['simpler.template']
     end
 
     def template_path
       path = template || [controller.name, action].join('/')
 
-      Simpler.root.join(VIEW_BASE_PATH, "#{path}.html.erb")
-    end
+      env['simpler.template_path'] = File.join(VIEW_BASE_PATH, "#{path}.html.erb")
 
+      Simpler.root.join(env['simpler.template_path'])
+    end
   end
 end
