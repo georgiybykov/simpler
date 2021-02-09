@@ -11,8 +11,8 @@ module Simpler
         @controller = controller
         @action = action
 
-        @path_pattern = to_path_pattern(path)
-        @params_pattern = to_params_pattern(path)
+        @path_pattern = path_pattern_regexp(path)
+        @params_pattern = params_pattern_regexp(path)
       end
 
       def match?(method, path)
@@ -21,23 +21,19 @@ module Simpler
 
       def params(path)
         params = path.match(@params_pattern)
-        params ? transform_keys(params.named_captures) : {}
+
+        hash_params = params.named_captures
+
+        params ? hash_params.transform_keys(&:to_sym) : {}
       end
 
       private
 
-      def transform_keys(data)
-        transformed_data = {}
-        data.each { |key, value| transformed_data[key.to_sym] = value }
-
-        transformed_data
-      end
-
-      def to_path_pattern(path)
+      def path_pattern_regexp(path)
         Regexp.new("^#{path.gsub(/:([\w_]+)/, '[0-9a-z_]+')}$")
       end
 
-      def to_params_pattern(path)
+      def params_pattern_regexp(path)
         Regexp.new("^#{path.gsub(/:([\w_]+)/, '(?<\1>[0-9a-z_]+)')}$")
       end
     end

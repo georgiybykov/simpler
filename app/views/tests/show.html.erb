@@ -7,6 +7,10 @@
   <body>
     <h1>Simpler framework in action!</h1>
 
-    <p><%= @test.title %> (<%= @test.level %>)</p>
+    <% if @test %>
+      <p><%= @test.title %> (<%= @test.level %>)</p>
+    <% else %>
+      <p>The record with `id = <%= @test_id %>` does not exist!</p>
+    <% end %>
   </body>
 </html>

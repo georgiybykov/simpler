@@ -24,11 +24,11 @@ module Simpler
     end
 
     def routes(&block)
-      @router.instance_eval(&block)
+      router.instance_eval(&block)
     end
 
     def call(env)
-      route = @router.route_for(env)
+      route = router.route_for(env)
 
       return not_found_url(env) unless route
 
@@ -41,6 +41,8 @@ module Simpler
     end
 
     private
+
+    attr_reader :router
 
     def setup_database
       database_config = YAML.load_file(Simpler.root.join('config/database.yml'))

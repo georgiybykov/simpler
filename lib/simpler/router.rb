@@ -20,10 +20,12 @@ module Simpler
       method = env['REQUEST_METHOD'].downcase.to_sym
       path = env['REQUEST_PATH']
 
-      @routes.find { |route| route.match?(method, path) }
+      routes.find { |route| route.match?(method, path) }
     end
 
     private
+    
+    attr_reader :routes
 
     def add_route(method, path, route_point)
       route_point = route_point.split('#')
@@ -31,7 +33,7 @@ module Simpler
       action = route_point[1]
       route = Route.new(method, path, controller, action)
 
-      @routes.push(route)
+      routes.push(route)
     end
 
     def controller_from_string(controller_name)
